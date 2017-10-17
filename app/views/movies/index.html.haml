@@ -9,7 +9,7 @@
       %th{:class => @rating_class}
         %a#rating_header{title: 'Rating', href: movies_path(:header => "rating_header")} Rating
       %th{:class => @release_class}
-        %a#title_header{title: 'Release Date', href: movies_path(:header => "release_date_header")} Release Date
+        %a#release_date_header{title: 'Release Date', href: movies_path(:header => "release_date_header")} Release Date
       %th More Info
   %tbody
     - @movies.each do |movie|
