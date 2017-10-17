@@ -17,7 +17,7 @@ class MoviesController < ApplicationController
       @title_class = 'hilite'
       @rating_class = 'th'
       @release_class = 'th'
-    elsif header == 'rating'
+    elsif header == 'rating_header'
       @movies = Movie.reorder(:rating)
       @title_class = 'th'
       @rating_class = 'hilite'
