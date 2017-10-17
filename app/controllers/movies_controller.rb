@@ -1,7 +1,7 @@
 class MoviesController < ApplicationController
 
   def movie_params
-    params.require(:movie).permit(:title, :rating, :description, :release_date)
+    params.require(:movie).permit(:title, :rating, :description, :release_date, :header)
   end
 
   def show
@@ -11,7 +11,25 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    header = params[:header]
+    if header == 'title_header'
+      @movies = Movie.reorder(:title)
+      @title_class = 'hilite'
+      @rating_class = 'th'
+      @release_class = 'th'
+    elsif header == 'rating'
+      @movies = Movie.reorder(:rating)
+      @title_class = 'th'
+      @rating_class = 'hilite'
+      @release_class = 'th'
+    elsif header == 'release_date_header'
+      @movies = Movie.reorder(:release_date)
+      @title_class = 'th'
+      @rating_class = 'th'
+      @release_class = 'hilite'
+    else
+      @movies = Movie.all
+    end
   end
 
   def new
