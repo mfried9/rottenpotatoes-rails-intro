@@ -11,6 +11,15 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @all_ratings = Movie.all_ratings
+     
+    if params[:ratings]
+      ratings = params[:ratings].keys
+      @selected_boxes = ratings
+      @movies = Movie.where(rating: ratings)
+    else
+      @movies = Movie.all
+    end
     header = params[:header]
     if header == 'title_header'
       @movies = Movie.reorder(:title)
@@ -27,8 +36,6 @@ class MoviesController < ApplicationController
       @title_class = 'th'
       @rating_class = 'th'
       @release_class = 'hilite'
-    else
-      @movies = Movie.all
     end
   end
 
