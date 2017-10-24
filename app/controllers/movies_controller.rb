@@ -1,7 +1,7 @@
 class MoviesController < ApplicationController
 
   def movie_params
-    params.require(:movie).permit(:title, :rating, :description, :release_date, :header)
+    params.require(:movie).permit(:title, :rating, :description, :release_date)
   end
 
   def show
@@ -11,32 +11,60 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @all_ratings = Movie.all_ratings
+    #@all_ratings = Movie.all_ratings
+    session[:ratings] = params[:ratings] if params[:ratings]
+    session[:sort] = params[:sort] if params[:sort]
+    
+    session_ratings = !params[:ratings] && session[:ratings]
+    session_sort = !params[:sort] && session[:sort]
      
-    if params[:ratings]
-      ratings = params[:ratings].keys
-      @selected_boxes = ratings
-      @movies = Movie.where(rating: ratings)
-    else
-      @movies = Movie.all
+    #if params[:ratings]
+    #  ratings = params[:ratings].keys
+    #  @selected_boxes = ratings
+    #  @movies = Movie.where(rating: ratings)
+    #else
+    #  @movies = Movie.all
+    if session_ratings || session_sort
+      flash.keep
+      redirect_to movies_path(ratings: session[:ratings], sort: session[:sort]) and return
     end
-    header = params[:header]
-    if header == 'title_header'
-      @movies = Movie.reorder(:title)
-      @title_class = 'hilite'
-      @rating_class = 'th'
-      @release_class = 'th'
-    elsif header == 'rating_header'
-      @movies = Movie.reorder(:rating)
-      @title_class = 'th'
-      @rating_class = 'hilite'
-      @release_class = 'th'
-    elsif header == 'release_date_header'
-      @movies = Movie.reorder(:release_date)
-      @title_class = 'th'
-      @rating_class = 'th'
-      @release_class = 'hilite'
+    
+    
+    #if header == 'title_header'
+    #  @movies = Movie.reorder(:title)
+    #  @title_class = 'hilite'
+    #elsif header == 'rating_header'
+    #  @movies = Movie.reorder(:rating)
+    #  @rating_class = 'hilite'
+    #elsif header == 'release_date_header'
+    #  @movies = Movie.reorder(:release_date)
+    #  @release_class = 'hilite'
+    
+    @all_ratings = Movie.all_ratings
+    ratings = params[:ratings].keys if params[:ratings]
+    @selected_boxes = ratings
+    
+    if params[:sort]
+      
+      if params[:sort] == "title"
+        @title_class = "hilite"
+      elsif params[:sort] == "rating"
+        @rating_class = "hilite"
+      elsif params[:sort] == "release_date"
+        @release_class = "hilite"
+      end
     end
+    
+    @movies = 
+      if params[:ratings] && params[:sort]
+        Movie.where(rating: ratings).reorder(params[:sort])
+      elsif params[:ratings]
+        Movie.where(rating: ratings)
+      elsif params[:sort]
+        Movie.order(params[:sort])
+      else
+        Movie.all
+      end
   end
 
   def new
